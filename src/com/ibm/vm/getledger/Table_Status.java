@@ -7,12 +7,10 @@ package com.ibm.vm.getledger;
  * if it's in use, if not then it will mark it as in use... if it was in use then app should sleep for
  * a period and try again.
  */
-
 import java.sql.*;
-
 import com.ibm.vm.general.*;
 
-public class Table_Status implements com.ibm.logging.IRecordType
+public class Table_Status
 {
   Connection dbConn = null;
   private static final String TABLESTATUSNAME = "BRSGUIDE.TABLE_STATUS";
@@ -50,11 +48,7 @@ public class Table_Status implements com.ibm.logging.IRecordType
     final String methodName = "getAttributes(String _tableName)";
     
     // If tracing then write out info
-    if (Log.trace.isLogging) {
-        Log.trace.entry(TYPE_LEVEL2, className, methodName);
-        Log.trace.text(TYPE_LEVEL2, className, methodName,
-          "Table to get status for: " + _tableName);
-    }    
+    Logger.log.fine("(" + className + "." + methodName + ") Table to get status for: " + _tableName);    
     
     // Prepare statement and set argument (table_name) for query
     stmt = dbConn.prepareStatement(query);
@@ -69,13 +63,8 @@ public class Table_Status implements com.ibm.logging.IRecordType
     rs.close();  // Close result set
     stmt.close();
     
-    // If tracing the message that we're leaving
-    if (Log.trace.isLogging)
-    {
-       Log.trace.text(TYPE_LEVEL2, className, methodName,
-         "Pulled config for sequence:" + tableStatusAttributes);
-       Log.trace.exit(TYPE_LEVEL2, className, methodName);
-    }
+    // For debugging dump attributes
+    Logger.log.fine("(" + className + "." + methodName + ") tableStatusAttributes: " + tableStatusAttributes);
     
     return tableStatusAttributes;
   }
@@ -133,11 +122,7 @@ public class Table_Status implements com.ibm.logging.IRecordType
     final String methodName = "updateInUse(....)";
     
     // If tracing then write out info
-    if (Log.trace.isLogging) {
-        Log.trace.entry(TYPE_LEVEL2, className, methodName);
-        Log.trace.text(TYPE_LEVEL2, className, methodName,
-          "Table to set InUse for: " + _tableName);
-    }    
+    Logger.log.fine("(" + className + "." + methodName + ") Table to set InUse for: " + _tableName);
     
     // Prepare statement and set arguments
     stmt = dbConn.prepareStatement(updStmt);
@@ -151,12 +136,8 @@ public class Table_Status implements com.ibm.logging.IRecordType
     stmt.close();        
     
     // If tracing the message that we're leaving
-    if (Log.trace.isLogging)
-    {
-       Log.trace.text(TYPE_LEVEL2, className, methodName,
-         "SetInUse for table:" + _tableName + " to: " + _inUse + " by: " + _inUseBy);
-       Log.trace.exit(TYPE_LEVEL2, className, methodName);
-    }
+    Logger.log.fine("(" + className + "." + methodName + ") SetInUse for table:" + _tableName + 
+                    " to: " + _inUse + " by: " + _inUseBy);
     
     return (rowsAffected > 0);
   }

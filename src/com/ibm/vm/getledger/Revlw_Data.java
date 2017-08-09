@@ -13,11 +13,11 @@ import java.io.FileWriter;
 import java.sql.*;
 import java.util.Vector;
 
-import com.ibm.vm.general.Log;
+import com.ibm.vm.general.Logger;
 import com.ibm.vm.general.SQLExceptionHelper;
 import com.ibm.vm.general.TableMetaData;
 
-public class Revlw_Data implements com.ibm.logging.IRecordType 
+public class Revlw_Data 
 {
   Connection dbConn = null;
   public static final String TABLENAME = "BRSGUIDE.REVLW_DATA";
@@ -48,10 +48,7 @@ public class Revlw_Data implements com.ibm.logging.IRecordType
     // set constants for use in logger/trace calls  
     final String methodName = "numRecords()";
     
-    // trace entry to method
-    if (Log.trace.isLogging) {
-        Log.trace.entry(TYPE_LEVEL2, className, methodName);        
-    }
+    Logger.log.fine("(" + className + "." + methodName + ") Before prepareStatement");
          
     stmt = dbConn.prepareStatement(query);
     ResultSet rs = stmt.executeQuery();
@@ -61,13 +58,7 @@ public class Revlw_Data implements com.ibm.logging.IRecordType
     rs.close();  // Close result set
     stmt.close();
     
-    // trace msg/exit
-    if (Log.trace.isLogging)
-    {
-       Log.trace.text(TYPE_LEVEL2, className, methodName,
-                      "Number of records: " + Integer.toString(numRecs));
-       Log.trace.exit(TYPE_LEVEL2, className, methodName);
-    }
+    Logger.log.fine("(" + className + "." + methodName + ") Number of records: " + Integer.toString(numRecs));
     
     return numRecs;
   }
@@ -82,31 +73,21 @@ public class Revlw_Data implements com.ibm.logging.IRecordType
     String query = "SELECT RECORD FROM " + TABLENAME;
     
     Vector<String> vectorOfData = new Vector<String>();
-    int numRecs = 0;
     
     // set constants for use in logger/trace calls  
     final String methodName = "getRecords()";
     
-    // trace entry to method
-    if (Log.trace.isLogging) {
-        Log.trace.entry(TYPE_LEVEL2, className, methodName);        
-    }
-           
+    Logger.log.fine("(" + className + "." + methodName + ") Before prepareStatement");
+    
     stmt = dbConn.prepareStatement(query);
     ResultSet rs = stmt.executeQuery();
     while (rs.next()) {
-      vectorOfData.add(rs.getString(1));
-      numRecs++;
+      vectorOfData.add(rs.getString(1));    
     }
     rs.close();
     stmt.close();
-    
-    if (Log.trace.isLogging)
-    {
-       Log.trace.text(TYPE_LEVEL2, className, methodName,
-                      "Records pulled: " + vectorOfData.size());
-       Log.trace.exit(TYPE_LEVEL2, className, methodName);
-    }
+
+    Logger.log.fine("(" + className + "." + methodName + ") Records pulled: " + vectorOfData.size());
     
     return vectorOfData;
   }
@@ -123,23 +104,15 @@ public class Revlw_Data implements com.ibm.logging.IRecordType
     
     // set constants for use in logger/trace calls  
     final String methodName = "purgeTable()";
-    
-    // trace entry to method
-    if (Log.trace.isLogging) {
-        Log.trace.entry(TYPE_LEVEL2, className, methodName);        
-    }
+
+    Logger.log.fine("(" + className + "." + methodName + ") Before prepareStatement");
            
     stmt = dbConn.prepareStatement(delCmd);
     rowsDeleted = stmt.executeUpdate();      
     stmt.close();
-    
-    Log.logger.message(TYPE_INFO,className,methodName,"LITERAL",
-        "Purged " + Integer.toString(rowsDeleted) + " from REVLW_DATA table");
-    
-    if (Log.trace.isLogging)
-    {     
-       Log.trace.exit(TYPE_LEVEL2, className, methodName);
-    }
+
+    Logger.log.fine("(" + className + "." + methodName + ") Purged " + 
+      Integer.toString(rowsDeleted) + " from REVLW_DATA table");
     
     return rowsDeleted;
   }

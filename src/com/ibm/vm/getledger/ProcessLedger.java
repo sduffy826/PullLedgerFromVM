@@ -6,11 +6,9 @@ package com.ibm.vm.getledger;
  * 
  */
 import java.sql.*;
-
-import com.ibm.logging.*;
 import com.ibm.vm.general.*;
 
-public class ProcessLedger implements IRecordType {
+public class ProcessLedger {
 
   private Connection dbConnection = null;
   private Table_Status tableStatusObj = null;
@@ -35,7 +33,7 @@ public class ProcessLedger implements IRecordType {
    */
   private ProcessLedger() {
     super();
-    className = "ProcessLedger";
+    className = this.getClass().getName();
   }
 
   /**
@@ -53,7 +51,7 @@ public class ProcessLedger implements IRecordType {
       if (e instanceof SQLException)
         SQLExceptionHelper.dumpInfo((SQLException) e, "ProcessLedger", "main");
 
-      System.out.println("Raised in mainline");
+      Logger.log.severe("Error raised in mainline");
       e.printStackTrace();
        
       System.exit(-1);
@@ -66,18 +64,10 @@ public class ProcessLedger implements IRecordType {
   private boolean processArgs(String[] args) throws SQLException, Exception {
     final String methodName = "processArgs(String[] args)";
     boolean returnValue = false;
-
-    if (Log.trace.isLogging) {
-      Log.trace.entry(TYPE_LEVEL2, className, methodName);
-      Log.trace.text(TYPE_LEVEL2, className, methodName, "Classpath:"
-          + System.getProperty("java.class.path"));
-      Log.trace.text(TYPE_LEVEL2, className, methodName, "Library path:"
-          + System.getProperty("java.library.path"));
-    }
-
+    
     if ((args.length < 4) || (args.length > 6))
-      Log.logger.message(TYPE_ERROR,className,methodName,"LITERAL",
-        "Invalid arguments, must pass urlToDatabase(path:port/db) userid passord outputFile [purgeFlag(Y/N)] [traceFlag(Y/N)]");     
+      Logger.log.severe("(" + className + "." + methodName + ") Invalid arguments, must pass " + 
+                         "urlToDatabase(path:port/db) userid passord outputFile [purgeFlag(Y/N)] [traceFlag(Y/N)]");     
     else {
       String pathNPort;
       String uid;
@@ -103,25 +93,22 @@ public class ProcessLedger implements IRecordType {
       if (args.length == 6) {
         forceTrace = args[5].equalsIgnoreCase("Y");
       }
-            
-      dbConnection = DriverManager.getConnection("jdbc:db2:" + pathNPort, uid, pwd);
-
+      
       // Turn on tracing if applicable
       if (forceTrace) {
-        Log.trace.setLogging(true);
-        Log.trace.text(TYPE_LEVEL2, className, methodName, "Tracing forced ON by program argument");
+        Logger.logUtils.setLogLevel(Logger.log, java.util.logging.Level.FINE);       
+        Logger.log.fine("(" + className + "." + methodName + ") Tracing forced ON by program argument");
       }
-            
-      if (Log.trace.isLogging) {
-        Log.trace.text(TYPE_LEVEL2, className, methodName, "Connected to "
-            + pathNPort + " using userid " + uid);
-      }
+      
+      dbConnection = DriverManager.getConnection("jdbc:db2:" + pathNPort, uid, pwd);
+      
+      Logger.log.fine("(" + className + "." + methodName + ") Connected to " + pathNPort + " using userid " + uid);
       returnValue = true;
     }
-
-    if (Log.trace.isLogging) {
-      Log.trace.exit(TYPE_LEVEL2, className, methodName);
-    }
+    Logger.log.fine("(" + className + "." + methodName + ") Classpath: " + System.getProperty("java.class.path"));
+    Logger.log.fine("(" + className + "." + methodName + ") Library path: " + System.getProperty("java.library.path"));    
+    
+    Logger.log.fine("(" + className + "." + methodName + ") Leaving method");
 
     return returnValue;
   }
@@ -134,10 +121,6 @@ public class ProcessLedger implements IRecordType {
 
     Exception theException = null;
     
-    if (Log.trace.isLogging) {
-      Log.trace.entry(TYPE_LEVEL2, className, methodName);
-    }
-
     if (processArgs(args)) {
       // Get object to handle the table_status
       tableStatusObj = new Table_Status(dbConnection);
@@ -150,11 +133,9 @@ public class ProcessLedger implements IRecordType {
       // Get attributes related to the REVLW_DATA table
       Table_Status_Attributes tableStatusAttributes = tableStatusObj.getAttributes("REVLW_DATA");
 
-      // If tracing then write out info
-      if (Log.trace.isLogging) {
-        Log.trace.text(TYPE_LEVEL2, className, methodName,
-          "TableStatusAttributes: " + tableStatusAttributes.toString());
-      }
+      // If tracing then write out info      
+      Logger.log.fine("(" + className + "." + methodName + ") TableStatusAttributes: " + 
+        tableStatusAttributes.toString());
 
       // See if in use
       if (tableStatusAttributes.getInUse().trim().length() == 0) {
@@ -167,24 +148,23 @@ public class ProcessLedger implements IRecordType {
             
           // Write the table contents to a file
           revLwObj.writeToFile(fileOutName);
-          Log.logger.message(TYPE_INFO, className, methodName, "LITERAL",
-            "Wrote ledger file: " + fileOutName);
+          Logger.log.info("(" + className + "." + methodName + ") Wrote ledger file: " + fileOutName);
 
           if (purgeOnSuccess) {
             revLwObj.purgeTable();  // Returns number purged but we don't care about here
+            Logger.log.fine("(" + className + "." + methodName + ") Purged revlw data");
+          }
+          else {
+            Logger.log.fine("(" + className + "." + methodName + ") Did not purge revlw data");
           }
             
           tableStatusObj.clearInUse("REVLW_DATA", inUseBy);           
         } else {
           // If tracing then write out info
-          if (Log.trace.isLogging) {
-            Log.trace.text(TYPE_LEVEL2, className, methodName,
-              "No data in revlw table to be processed");
-          }
+          Logger.log.fine("(" + className + "." + methodName + ") No data in revlw to process");          
         }
       } else {
-        Log.logger.message(TYPE_WARNING, className, methodName, "LITERAL",
-          "Table in use... ignore this run");
+        Logger.log.info("(" + className + "." + methodName + ") Table in use... ignore this run");
       }        
     }
   }

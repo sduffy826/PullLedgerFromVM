@@ -5,12 +5,10 @@ package com.ibm.vm.getledger;
  * did this so that the host could ensure that the pc application is running on a scheduled
  * basis.  If the host doesn't see activity then it'll send a notice to the developer.
  */
-
 import java.sql.*;
-
 import com.ibm.vm.general.*;
 
-public class Log_Ping implements com.ibm.logging.IRecordType
+public class Log_Ping 
 {
   Connection dbConn = null;
   private static final String TABLESTATUSNAME = "BRSGUIDE.PING_STATUS";
@@ -70,11 +68,8 @@ public class Log_Ping implements com.ibm.logging.IRecordType
     final String methodName = "insertPing(in_use, timestamp)";
     
     // If tracing then write out info
-    if (Log.trace.isLogging) {
-        Log.trace.entry(TYPE_LEVEL2, className, methodName);
-        Log.trace.text(TYPE_LEVEL2, className, methodName,
-            "InUse: " + _inUse + " Timestamp: " + _ts.toString());
-    }    
+    Logger.log.fine("(" + className + "." + methodName + ") Before prepareStatement");
+    Logger.log.fine("(" + className + "." + methodName + ") InUse: " + _inUse + " Timestamp: " + _ts.toString());
     
     // Prepare statement and set arguments
     stmt = dbConn.prepareStatement(insStmt);
@@ -83,11 +78,7 @@ public class Log_Ping implements com.ibm.logging.IRecordType
     rowsAffected = stmt.executeUpdate();
     stmt.close();        
     
-    // If tracing the message that we're leaving
-    if (Log.trace.isLogging)
-    {       
-       Log.trace.exit(TYPE_LEVEL2, className, methodName);
-    }
+    Logger.log.fine("(" + className + "." + methodName + ") Done rowsAffected: " + rowsAffected);
     
     return (rowsAffected > 0);
   }
