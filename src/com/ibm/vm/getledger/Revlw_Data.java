@@ -10,11 +10,12 @@ package com.ibm.vm.getledger;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.Vector;
 
 import com.ibm.vm.general.Logger;
-import com.ibm.vm.general.SQLExceptionHelper;
 import com.ibm.vm.general.TableMetaData;
 
 public class Revlw_Data 

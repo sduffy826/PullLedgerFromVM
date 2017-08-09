@@ -5,7 +5,10 @@ package com.ibm.vm.getledger;
  * did this so that the host could ensure that the pc application is running on a scheduled
  * basis.  If the host doesn't see activity then it'll send a notice to the developer.
  */
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.Timestamp;
+
 import com.ibm.vm.general.*;
 
 public class Log_Ping 

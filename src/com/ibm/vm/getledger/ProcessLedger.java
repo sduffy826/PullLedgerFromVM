@@ -5,7 +5,10 @@ package com.ibm.vm.getledger;
  * SAP for processing.  This was developed to remove the dependency on ftp.
  * 
  */
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
 import com.ibm.vm.general.*;
 
 public class ProcessLedger {
@@ -72,7 +75,6 @@ public class ProcessLedger {
       String pathNPort;
       String uid;
       String pwd;
-      String pFlag;
 
       pathNPort = args[0];
       uid = args[1];
@@ -105,6 +107,8 @@ public class ProcessLedger {
       Logger.log.fine("(" + className + "." + methodName + ") Connected to " + pathNPort + " using userid " + uid);
       returnValue = true;
     }
+    
+    // When tracing is on we want to see classpath and libpath
     Logger.log.fine("(" + className + "." + methodName + ") Classpath: " + System.getProperty("java.class.path"));
     Logger.log.fine("(" + className + "." + methodName + ") Library path: " + System.getProperty("java.library.path"));    
     
@@ -118,8 +122,6 @@ public class ProcessLedger {
    */
   private void run(String[] args) throws Exception {
     final String methodName = "run(String[] args)";
-
-    Exception theException = null;
     
     if (processArgs(args)) {
       // Get object to handle the table_status

@@ -7,7 +7,10 @@ package com.ibm.vm.getledger;
  * if it's in use, if not then it will mark it as in use... if it was in use then app should sleep for
  * a period and try again.
  */
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
 import com.ibm.vm.general.*;
 
 public class Table_Status
