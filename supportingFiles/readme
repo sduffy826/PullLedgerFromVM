@@ -1,3 +1,4 @@
+[This is pretty much the same as the readme.md file]
 Since the desire was to check for the ledger data frequently I 
 scheduled it outside of infosphere/director.  You can still see
 the job log from director but scheduling is done thru cron.

@@ -15,28 +15,31 @@ public class TableMetaData {
     final String methodName = "showMetaData()";
     
     stmt = _dbConn.prepareStatement(query);
+    
+    // If debugging then this will display
+    Logger.log.fine("(" + className + "." + methodName + ") Before prepareStatement");
 
     // execute the query 
     ResultSet rs = stmt.executeQuery();
     ResultSetMetaData rsmd = rs.getMetaData();
     int numberOfColumns = rsmd.getColumnCount();
 
-    System.out.println("getSchemaName: " + rsmd.getSchemaName(1));
-    System.out.println("getTableName: " + rsmd.getTableName(1));
-    System.out.println("");
-
+    Logger.log.info("(" + className + "." + methodName + ") getSchemaName: " + rsmd.getSchemaName(1));
+    Logger.log.info("(" + className + "." + methodName + ") getTableName: " + rsmd.getTableName(1));
+    
     for (int i = 1; i <= numberOfColumns; i++)
     {
-      System.out.println("getColumnLabel: " + rsmd.getColumnLabel(i));
-      System.out.println("getColumnName: " + rsmd.getColumnName(i));
-      System.out.println("getColumnType: " + rsmd.getColumnType(i));
-      System.out.println("getColumnTypeName: " + rsmd.getColumnTypeName(i));
-      System.out.println("getPrecision: " + rsmd.getPrecision(i));
-      System.out.println("getScale: " + rsmd.getScale(i));
-      System.out.println("");     
+      Logger.log.info("(" + className + "." + methodName + ") getColumnLabel: " + rsmd.getColumnLabel(i));
+      Logger.log.info("(" + className + "." + methodName + ") getColumnName: " + rsmd.getColumnName(i));
+      Logger.log.info("(" + className + "." + methodName + ") getColumnType: " + rsmd.getColumnType(i));
+      Logger.log.info("(" + className + "." + methodName + ") getColumnTypeName: " + rsmd.getColumnTypeName(i));
+      Logger.log.info("(" + className + "." + methodName + ") getPrecision: " + rsmd.getPrecision(i));
+      Logger.log.info("(" + className + "." + methodName + ") getScale: " + rsmd.getScale(i));
+      Logger.log.info(" ");
     }
     rs.close();
     stmt.close();
+    Logger.log.fine("(" + className + "." + methodName + ") Leaving method");
         
     return;
   }
